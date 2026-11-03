@@ -1,26 +1,520 @@
 @import "tailwindcss";
 
+/* ════════════════════════════════════════════════════════════════════
+   RAYANSH SINGH — EDITORIAL PORTFOLIO IDENTITY
+   Visual Language: Deep Velvet Black (#080808) + Golden Amber (#d9a544)
+   ════════════════════════════════════════════════════════════════════ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #080808;
+  --bg-deep: #050505;
+  --fg: #ede7dc;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  --fg-muted: rgba(237, 231, 220, 0.65);
+  --fg-subtle: rgba(237, 231, 220, 0.4);
+
+  /* Exact sampled color from user's golden amber swatch */
+  --theme-amber: #d9a544;
+  --theme-amber-glow: rgba(217, 165, 68, 0.25);
+  --theme-amber-subtle: rgba(217, 165, 68, 0.12);
+
+  --accent-gold: #d9a544;
+  --accent-emerald: #22c55e;
+  --border-hairline: rgba(237, 231, 220, 0.08);
+  --border-amber: rgba(217, 165, 68, 0.25);
+
+  --font-display: var(--font-anton), "Anton", "Impact", -apple-system, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Hero breakpoints — exact max-width media queries (registered in this order so
+   the 768px rules override the 1080px ones, matching the original cascade) */
+@custom-variant tab (@media (max-width: 1080px));
+@custom-variant mob (@media (max-width: 768px));
+
+@theme {
+  --animate-hero-scroll: heroScrollRotate 16s linear infinite;
+
+  @keyframes heroScrollRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Base layer so Tailwind utilities can override the reset */
+/* Lenis drives scrolling; native smooth-scroll would fight it */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* Firefox: hide user scrollbar */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+  }
+
+  /* Hide every scrollbar (page and any inner scroller) */
+  * {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+  }
+
+  *::-webkit-scrollbar,
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
+    /* Prevents Windows Chrome/Edge double scrollbar */
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+}
+
+/* Subtle cinematic film grain overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION 02 — THE PERSON BEHIND THE WORK (3D EDITORIAL)
+   ════════════════════════════════════════════════════════════ */
+
+.sec2-container {
+  position: relative;
+  width: 100%;
+  background-color: var(--bg-deep);
+  color: var(--fg);
+  padding: clamp(5rem, 11vh, 9.5rem) clamp(1.5rem, 5vw, 6rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4.5rem, 8vh, 7.5rem);
+  border-top: 1px solid var(--border-hairline);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Ambient glow behind cards */
+.sec2-bg-glow {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(600px, 80vw, 1200px);
+  height: clamp(500px, 60vh, 900px);
+  background: radial-gradient(ellipse at center,
+      rgba(217, 165, 68, 0.07) 0%,
+      rgba(140, 100, 45, 0.03) 40%,
+      transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 1. Header & Introduction */
+.sec2-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  max-width: 960px;
+}
+
+.sec2-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.sec2-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--theme-amber);
+  box-shadow: 0 0 10px rgba(217, 165, 68, 0.9);
+}
+
+.sec2-eyebrow-text {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: var(--theme-amber);
+  text-transform: uppercase;
+}
+
+.sec2-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 7.8vw, 7.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.sec2-title-amber {
+  color: var(--theme-amber);
+}
+
+.sec2-intro {
+  font-size: clamp(1rem, 1.22vw, 1.3rem);
+  line-height: 1.8;
+  color: #ede7dc;
+  max-width: 68ch;
+  letter-spacing: 0.01em;
+}
+
+.sec2-highlight {
+  color: var(--theme-amber);
+  font-weight: 600;
+}
+
+/* 2. 3D Interactive Cards Grid */
+.sec2-cards-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.8rem, 3vw, 2.8rem);
+  perspective: 1200px;
+}
+
+.sec2-card-3d {
+  position: relative;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.028) 0%, rgba(14, 12, 9, 0.75) 100%);
+  border: 1px solid rgba(237, 231, 220, 0.09);
+  border-radius: 8px;
+  padding: clamp(2rem, 3.2vw, 3.2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.sec2-card-3d:hover {
+  border-color: rgba(217, 165, 68, 0.55);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 45px rgba(217, 165, 68, 0.12);
+}
+
+.sec2-card-3d--active {
+  border-color: rgba(217, 165, 68, 0.4);
+}
+
+/* Interactive Dynamic Glare */
+.sec2-card-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  border-radius: inherit;
+}
+
+/* Card Top: Number + Badge + Icon */
+.sec2-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sec2-card-num {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--theme-amber);
+  opacity: 0.9;
+}
+
+.sec2-card-badge-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.sec2-card-badge {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--theme-amber);
+  background: rgba(217, 165, 68, 0.08);
+  border: 1px solid rgba(217, 165, 68, 0.25);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+}
+
+.sec2-card-icon {
+  width: 30px;
+  height: 30px;
+  color: var(--theme-amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+}
+
+.sec2-card-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Role Block */
+.sec2-card-role-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sec2-card-tagline {
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  color: rgba(217, 165, 68, 0.85);
+  text-transform: uppercase;
+}
+
+.sec2-card-role {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 2.6vw, 2.7rem);
+  line-height: 1;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+/* Headline */
+.sec2-card-headline {
+  font-size: clamp(1.05rem, 1.25vw, 1.35rem);
+  line-height: 1.42;
+  color: var(--theme-amber);
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Authentic Quote Body */
+.sec2-card-quote {
+  font-size: clamp(0.92rem, 1.05vw, 1.12rem);
+  line-height: 1.76;
+  color: #ede7dc;
+}
+
+/* Card Footer */
+.sec2-card-footer {
+  margin-top: auto;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.sec2-footer-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--theme-amber);
+}
+
+.sec2-footer-pillar {
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+/* 3. Memorable Closing Line */
+.sec2-closing-box {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.6rem;
+  padding: clamp(3rem, 6vh, 4.5rem) clamp(1.5rem, 4vw, 3rem);
+  background: radial-gradient(circle at center, rgba(217, 165, 68, 0.05) 0%, rgba(255, 255, 255, 0.01) 70%);
+  border: 1px solid rgba(217, 165, 68, 0.2);
+  border-radius: 8px;
+  max-width: 920px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.sec2-closing-mark {
+  color: var(--theme-amber);
+  font-size: 1.2rem;
+  letter-spacing: 0.3em;
+}
+
+.sec2-closing-quote {
+  font-size: clamp(1.2rem, 2.1vw, 2.1rem);
+  line-height: 1.48;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--fg);
+  max-width: 32ch;
+}
+
+.sec2-closing-author {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.sec2-author-line {
+  width: 40px;
+  height: 1px;
+  background-color: rgba(217, 165, 68, 0.4);
+}
+
+.sec2-author-name {
+  font-size: 0.72rem;
+  letter-spacing: 0.26em;
+  font-weight: 600;
+  color: var(--theme-amber);
+  text-transform: uppercase;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN (SECTION 02) — hero responsive rules live inline in Hero.jsx
+   ════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1080px) {
+  .sec2-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .sec2-container {
+    padding: 4rem 1.4rem;
+    gap: 3.5rem;
+  }
+
+  .sec2-card-3d {
+    padding: 1.8rem 1.4rem;
+  }
+
+  .sec2-closing-box {
+    padding: 2.2rem 1.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sec2-card-3d {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+@keyframes dayPop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.16);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes calShine {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(420%);
+  }
+}
+
+@keyframes nudgeRight {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+}
+
+@keyframes storyHint {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
